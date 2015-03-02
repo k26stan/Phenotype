@@ -126,11 +126,18 @@ TAB <- data.frame(IID=ID_2[REP], FID=ID_2[REP], WK=rep(WKS,nrow(MG)), SEX=SEX[RE
 ## Include Treatment for each person for each week
 ARM <- Drug[REP]
 ESC <- EE[REP]
+ # Drug
 DRUG <- rep(1,nrow(TAB))
 DRUG[which( TAB$WK==0 )] <- 0
 DRUG[which( ARM=="Placebo" & ESC=="N" & TAB$WK<=24 )] <- 0
 DRUG[which( ARM=="Placebo" & ESC=="Y" & TAB$WK<=16 )] <- 0
-TAB <- data.frame(TAB,DRUG)
+ # Placebo
+PLAC <- rep(0,nrow(TAB))
+PLAC[which( ARM=="Placebo" & ESC=="N" & TAB$WK<=24 )] <- 1
+PLAC[which( ARM=="Placebo" & ESC=="Y" & TAB$WK<=16 )] <- 1
+PLAC[which( TAB$WK==0 )] <- 0
+head(data.frame( DRUG, PLAC ), 50 )
+TAB <- data.frame(TAB,DRUG,PLAC)
 
 ## Put Response Metrics in the Table
 # CRP (CRP_COLS <- 83:98)
