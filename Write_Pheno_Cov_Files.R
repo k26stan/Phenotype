@@ -1,7 +1,7 @@
 ## Check out Full-Time Response Data and Make Phenotype/Cov Files for Assoc Tests ##
 ## Janssen RA Cohort ##
 ## June 03, 2014 ##
-## Updated February 26, 2015 ##
+## Updated February 26, 20length(COLUMNS) ##
 ## Kristopher Standish ##
 
 ######################################
@@ -9,29 +9,29 @@
 ######################################
 
 # Set Date
-DATE <- "20150113"
+DATE <- "20length(COLUMNS)0310"
 
 # TSCC Paths
 PathToData <- "/projects/janssen/clinical/"
 PathToSave <- "/projects/janssen/clinical/Plots/20140522/"
 
 # Mac Paths
-PathToData <- "/Users/kstandis/Data/Burn/"
-PathToSave <- "/Users/kstandis/Data/Burn/Plots/20140522/"
+PathToData <- "/Users/kstandis/Data/Burn/Data/Phenos/"
+PathToSave <- paste("/Users/kstandis/Data/Burn/Plots/",DATE,sep="")
 PathToPheno <- "/Users/kstandis/Data/Burn/Phenos/"
 
 ## Previously Compiled Data
-DR <- read.table(paste(PathToData,"DRSA436EE.txt",sep=""),sep="\t",header=T)
-FT <- read.table(paste(PathToData,"20140507_FULL_RESP.csv",sep=""),sep=",",header=T)
-NEW <- read.table(paste(PathToData,"DAS_Observed_wk20_wk24.csv",sep=""),sep=",",header=T)
+DR <- read.table(paste(PathToData,"Raw_Files/DRSA436EE.txt",sep=""),sep="\t",header=T)
+FT <- read.table(paste(PathToData,"Raw_Files/20140507_FULL_RESP.csv",sep=""),sep=",",header=T)
+NEW <- read.table(paste(PathToData,"Raw_Files/DAS_Observed_wk20_wk24.csv",sep=""),sep=",",header=T)
+RAD <- read.table(paste(PathToData,"Raw_Files/20length(COLUMNS)0306_Radiograph_Data.csv",sep=""),sep=",",header=T)
 EIGEN <- read.table(paste(PathToData,"EIGEN/HC_FULL.eigenvec",sep=""),header=T)
 
 ## Compare Older FT Files
-FT.507 <- read.table(paste(PathToData,"20140507_FULL_RESP.csv",sep=""),sep=",",header=T)
-FT.609 <- read.table(paste(PathToData,"20140609_Full_Table.txt",sep=""),sep="\t",header=T)
-FT.610 <- read.table(paste(PathToData,"20140610_Full_Table.txt",sep=""),sep="\t",header=T)
-FT.1106 <- read.table(paste(PathToData,"20141106_Full_Table.txt",sep=""),sep="\t",header=T)
-FT.1119 <- read.table(paste(PathToData,"20141119_Full_Table.txt",sep=""),sep="\t",header=T)
+FT.609 <- read.table(paste(PathToData,"20141227_and_Before/20140609_Full_Table.txt",sep=""),sep="\t",header=T)
+FT.610 <- read.table(paste(PathToData,"20141227_and_Before/20140610_Full_Table.txt",sep=""),sep="\t",header=T)
+FT.1106 <- read.table(paste(PathToData,"20141227_and_Before/20141106_Full_Table.txt",sep=""),sep="\t",header=T)
+FT.1119 <- read.table(paste(PathToData,"20141227_and_Before/20141119_Full_Table.txt",sep=""),sep="\t",header=T)
 setdiff( names(FT.610),names(FT.609) )
 
 ## Merge Tables
@@ -99,7 +99,7 @@ MG.610 <- MG.610.c[ , 1:(ncol(MG.610.c)-3) ]
  # 62:77 - Change in DAS
  # 78:87,91:93,97:99 - EULAR Response
  #*88:90,94:96 - EULAR Response Shifted so Time Indicated is After first Golimumab Treatment
- # 100:115 - DASFLG_?wk: Y/N - Patient have "Good" or "Moderate" Response at this time?
+ # 100:1length(COLUMNS) - DASFLG_?wk: Y/N - Patient have "Good" or "Moderate" Response at this time?
  # 116:131 - DASREM_?wk: Y/N - Patient in Clinical Remission at this time?
  # 132:147 - SJC_?wk: Swollen Joint Count
  # 148:163 - TJC_?wk: Tender Joint Count
@@ -111,7 +111,7 @@ MG.610 <- MG.610.c[ , 1:(ncol(MG.610.c)-3) ]
  # 244:259 - ACR90_?wk
 
 ## Specify Column Numbers for Pertinent Columns in MG
-DAS_COLS <- 115:130 #41:56+74 # DAS Scores in MG Table
+DAS_COLS <- 1length(COLUMNS):130 #41:56+74 # DAS Scores in MG Table
 CRP_COLS <- 83:98 # CRP Levels in MG Table
 SJC_COLS <- 206:221 # Swollen Joint Count in MG Table
 TJC_COLS <- 222:237 # Tender Joint Count in MG Table
@@ -1221,6 +1221,37 @@ write.table(OUT_ANC,paste(PathToPheno,"COV_ANC.txt",sep=""),sep="\t",row.names=F
 ## END OF DOC ##################################################################################
 ################################################################################################
 ################################################################################################
+
+COLUMNS <- c( 275:277, 284:295 ) #, 401:409 )
+COLUMNS <- COLUMNS[ c( seq(1,length(COLUMNS),3),seq(2,length(COLUMNS),3),seq(3,length(COLUMNS),3) ) ]
+ # Hist
+png( paste(PathToSave,"Structural_Hists.png",sep="/"), width=2000,height=1500, pointsize=24 )
+par(mfrow=c(3,length(COLUMNS)/3))
+COLORS <- rep( c( "cadetblue1","tomato1","mediumpurple1" ), rep(length(COLUMNS)/3,3) )
+for ( c in 1:length(COLUMNS) ) { 
+	col <- COLUMNS[c]
+	hist( as.numeric(RAD[,col]), main=colnames(RAD)[col], col=COLORS[c], xlab=colnames(RAD)[col] )
+}
+dev.off()
+ # Heatmap
+png( paste(PathToSave,"Structural_Heat.png",sep="/"), width=2000,height=2000, pointsize=34 )
+COLS.list <- c("black","slateblue3","steelblue2","springgreen2","gold2","chocolate2","firebrick2")
+COLS <- colorRampPalette(COLS.list)(100)
+CORR <- cor( data.matrix(RAD[,COLUMNS]), use="pairwise.complete.obs", method="spearman" )
+heatmap.2( CORR, scale="none",trace="none", main="Correlation b/n Structural Phenotypes", col=COLS, margins=c(8,8) )
+dev.off()
+ # Scatter
+png( paste(PathToSave,"Structural_Scatter.png",sep="/"), width=2000,height=1000, pointsize=24 )
+par(mfrow=c(2,length(COLUMNS)/3))
+COLORS <- rep( c( "cadetblue1","tomato1","mediumpurple1" ), rep(length(COLUMNS)/3,3) )
+for ( c in (length(COLUMNS)/3+1):length(COLUMNS) ) { 
+	col <- COLUMNS[c]
+	col.0 <- gsub( "24","0", colnames(RAD)[col] )
+	col.0 <- gsub( "52","0", col.0 )
+	plot( as.numeric(RAD[,col]) ~ as.numeric(RAD[,col.0]), main=colnames(RAD)[col], col=COLORS[c], xlab=col.0, ylab=colnames(RAD)[col] )
+	abline( 0,1, col="black" )
+}
+dev.off()
 
 ################################################################################################
 ################################################################################################
