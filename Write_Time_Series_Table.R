@@ -9,7 +9,7 @@
 ######################################
 
 ## Set Date
-DATE <- "20150226"
+DATE <- "20150506"
 
 # ## TSCC Paths
 # PathToData <- "/projects/janssen/clinical/"
@@ -121,7 +121,7 @@ attach(MG)
 
 ## Make Array for Time-Series Analysis
 REP <- sort(rep(1:nrow(MG),16))
-TAB <- data.frame(IID=ID_2[REP], FID=ID_2[REP], WK=rep(WKS,nrow(MG)), SEX=SEX[REP], AGE=AGE[REP], HT=HT[REP], WT=WT[REP], BMI=BMI[REP], DIS_DUR=DIS_DUR[REP], RF_ACPA=RF_ACPA[REP], ACPA=ACPA[REP], RF=RF[REP])
+TAB <- data.frame(IID=ID_2[REP], FID=ID_2[REP], WK=rep(WKS,nrow(MG)), SEX=SEX[REP], AGE=AGE[REP], HT=HT[REP], WT=WT[REP], BMI=BMI[REP], DIS_DUR=DIS_DUR[REP], RF_ACPA=RF_ACPA[REP], ACPA=ACPA[REP], RF=RF[REP], COUN=COUN[REP] )
 
 ## Include Treatment for each person for each week
 ARM <- Drug[REP]
@@ -153,7 +153,14 @@ SJC28_VEC <- c(t(as.matrix(MG[,SJC28_COLS])))
 # TJC28
 TJC28_VEC <- c(t(as.matrix(MG[,TJC28_COLS])))
 
-TAB <- data.frame(TAB, CRP=CRP_VEC, DAS=DAS_VEC, SJC=SJC_VEC, TJC=TJC_VEC, SJC28=SJC28_VEC, TJC28=TJC28_VEC)
+## Include Transformed Data
+lCRP_VEC <- log10( CRP_VEC )
+rSJC_VEC <- sqrt( SJC_VEC )
+rTJC_VEC <- sqrt( TJC_VEC )
+rSJC28_VEC <- sqrt( SJC28_VEC )
+rTJC28_VEC <- sqrt( TJC28_VEC )
+
+TAB <- data.frame(TAB, CRP=CRP_VEC, DAS=DAS_VEC, SJC=SJC_VEC, TJC=TJC_VEC, SJC28=SJC28_VEC, TJC28=TJC28_VEC, lCRP=lCRP_VEC, rSJC=rSJC_VEC, rTJC=rTJC_VEC, rSJC28=rSJC28_VEC, rTJC28=rTJC28_VEC)
 detach(MG)
 
 ## Remove Timepoints after Patient Dropped Out
@@ -171,9 +178,6 @@ for ( i in 1:length(IN) ) {
 
 ## Remove the Missing DAS values from NEW table
 TAB.3 <- TAB.2[ -which(TAB.2[,"DAS"]==99), ]
-
-# ## Add in Genotype Data
-# TAB <- data.frame(TAB, GT[REP,])
 
 ######################################
 ## WRITE OUTPUT TABLE ################
