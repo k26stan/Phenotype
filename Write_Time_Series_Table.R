@@ -9,7 +9,7 @@
 ######################################
 
 ## Set Date
-DATE <- "20150506"
+DATE <- "20150512"
 
 # ## TSCC Paths
 # PathToData <- "/projects/janssen/clinical/"
@@ -169,7 +169,7 @@ colnames(TAB.2) <- colnames(TAB)
 for ( i in 1:length(IN) ) {
 	samp <- names(IN)[i]
 	TEMP_TAB <- TAB[ grep(samp,TAB[,"IID"]), ]
-	final_wk <- IN[i]
+	final_wk <- DP[i,1]
 	TEMP_TAB <- TEMP_TAB[ which(TEMP_TAB[,"WK"]<=final_wk), ]
 	TAB.2 <- rbind(TAB.2,TEMP_TAB)
 	# which_rm <- intersect( grep(samp,TAB[,"IID"]), which(TAB[,"WK"]>final_wk) )
@@ -177,7 +177,9 @@ for ( i in 1:length(IN) ) {
 }
 
 ## Remove the Missing DAS values from NEW table
-TAB.3 <- TAB.2[ -which(TAB.2[,"DAS"]==99), ]
+# TAB.3 <- TAB.2[ -which(TAB.2[,"DAS"]==99), ]
+TAB.3 <- TAB.2
+TAB.3[ which(TAB.3[,"DAS"]==99), ] <- NA
 
 ######################################
 ## WRITE OUTPUT TABLE ################
