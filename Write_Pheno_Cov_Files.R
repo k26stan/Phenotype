@@ -1,7 +1,7 @@
 ## Check out Full-Time Response Data and Make Phenotype/Cov Files for Assoc Tests ##
 ## Janssen RA Cohort ##
 ## June 03, 2014 ##
-## Updated February 26, 20length(COLUMNS) ##
+## Updated February 26, 2015 ##
 ## Kristopher Standish ##
 
 ######################################
@@ -9,7 +9,7 @@
 ######################################
 
 # Set Date
-DATE <- "20length(COLUMNS)0310"
+DATE <- "20150520"
 
 # TSCC Paths
 PathToData <- "/projects/janssen/clinical/"
@@ -24,7 +24,7 @@ PathToPheno <- "/Users/kstandis/Data/Burn/Phenos/"
 DR <- read.table(paste(PathToData,"Raw_Files/DRSA436EE.txt",sep=""),sep="\t",header=T)
 FT <- read.table(paste(PathToData,"Raw_Files/20140507_FULL_RESP.csv",sep=""),sep=",",header=T)
 NEW <- read.table(paste(PathToData,"Raw_Files/DAS_Observed_wk20_wk24.csv",sep=""),sep=",",header=T)
-RAD <- read.table(paste(PathToData,"Raw_Files/20length(COLUMNS)0306_Radiograph_Data.csv",sep=""),sep=",",header=T)
+RAD <- read.table(paste(PathToData,"Raw_Files/20150306_Radiograph_Data.csv",sep=""),sep=",",header=T)
 EIGEN <- read.table(paste(PathToData,"EIGEN/HC_FULL.eigenvec",sep=""),header=T)
 
 ## Compare Older FT Files
@@ -99,7 +99,7 @@ MG.610 <- MG.610.c[ , 1:(ncol(MG.610.c)-3) ]
  # 62:77 - Change in DAS
  # 78:87,91:93,97:99 - EULAR Response
  #*88:90,94:96 - EULAR Response Shifted so Time Indicated is After first Golimumab Treatment
- # 100:1length(COLUMNS) - DASFLG_?wk: Y/N - Patient have "Good" or "Moderate" Response at this time?
+ # 100:115 - DASFLG_?wk: Y/N - Patient have "Good" or "Moderate" Response at this time?
  # 116:131 - DASREM_?wk: Y/N - Patient in Clinical Remission at this time?
  # 132:147 - SJC_?wk: Swollen Joint Count
  # 148:163 - TJC_?wk: Tender Joint Count
@@ -111,7 +111,7 @@ MG.610 <- MG.610.c[ , 1:(ncol(MG.610.c)-3) ]
  # 244:259 - ACR90_?wk
 
 ## Specify Column Numbers for Pertinent Columns in MG
-DAS_COLS <- 1length(COLUMNS):130 #41:56+74 # DAS Scores in MG Table
+DAS_COLS <- 115:130 #41:56+74 # DAS Scores in MG Table
 CRP_COLS <- 83:98 # CRP Levels in MG Table
 SJC_COLS <- 206:221 # Swollen Joint Count in MG Table
 TJC_COLS <- 222:237 # Tender Joint Count in MG Table
@@ -1133,7 +1133,7 @@ Full_Table <- data.frame( MG, RAND_COMPILE, EIGEN, PG_COMPILE, DEL_COMPILE, EUL_
 # heatmap.2(COR_FULL, col=COLS, breaks=BRKS, Colv=F, Rowv=F, dendrogram="none", trace="none" )
 
 ## Write Table
-write.table(Full_Table,paste(PathToData,DATE,"_Full_Table.txt",sep=""),sep="\t",row.names=F,col.names=T,quote=F)
+write.table(Full_Table,paste(PathToData,"/Full_Tables/",DATE,"_Full_Table.txt",sep=""),sep="\t",row.names=F,col.names=T,quote=F)
 
 
 ################################################################################################
