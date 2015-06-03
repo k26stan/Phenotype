@@ -9,7 +9,7 @@
 ######################################
 
 ## Set Date
-DATE <- "20150512"
+DATE <- "20150530"
 
 # ## TSCC Paths
 # PathToData <- "/projects/janssen/clinical/"
@@ -23,7 +23,7 @@ PathToTableOut <- "/Users/kstandis/Data/Burn/Data/Phenos/"
 ## Previously Compiled Data
 DR <- read.table(paste(PathToRawFiles,"DRSA436EE.txt",sep=""),sep="\t",header=T)
 FT <- read.table(paste(PathToRawFiles,"20140507_FULL_RESP.csv",sep=""),sep=",",header=T)
-NEW <- read.table(paste(PathToRawFiles,"DAS_Observed_wk20_wk24.csv",sep=""),sep=",",header=T)
+NEW <- read.table(paste(PathToRawFiles,"20141215_DAS_Observed_wk20_wk24.csv",sep=""),sep=",",header=T)
 
 ## Load Genotypes Files
 # GT <- read.table(INSERT_GENO_FILE_HERE,...,...)
@@ -179,7 +179,7 @@ for ( i in 1:length(IN) ) {
 ## Remove the Missing DAS values from NEW table
 # TAB.3 <- TAB.2[ -which(TAB.2[,"DAS"]==99), ]
 TAB.3 <- TAB.2
-TAB.3[ which(TAB.3[,"DAS"]==99), ] <- NA
+TAB.3[ which(TAB.3[,"DAS"]==99), "DAS" ] <- NA
 
 ######################################
 ## WRITE OUTPUT TABLE ################
