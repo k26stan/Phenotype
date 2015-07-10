@@ -10,12 +10,13 @@
 library(xlsx)
 
 ## Set Date
-DATE <- "20150528"
+DATE <- gsub("-","",Sys.Date())
 
 ## Set Paths to Data Sets & Save Locations (TSCC)
 PathToVectra <- "/Users/kstandis/Data/Burn/Data/Phenos/Raw_Files/20150526_Vectra_DA_ART3001.csv"
 PathToFT <- "/Users/kstandis/Data/Burn/Data/Phenos/Full_Tables/20150520_Full_Table.txt"
 PathToPlot <- paste("/Users/kstandis/Data/Burn/Plots/",DATE,"_Vectra/",sep="")
+dir.create( PathToPlot )
 
 ## Load Data
 VEC.l <- read.table( PathToVectra, sep=",",header=T) ; VEC <- VEC.l
@@ -61,25 +62,40 @@ dim(VEC.4)
  # Re-order Columns
 VEC.4 <- VEC.4[order(VEC.4$WKS.x),] ; VEC.4 <- VEC.4[order(VEC.4$ID),] ; 
 
-pairs( data.frame(VEC.4$Score,VEC.4$DAS,log10(VEC.4$CRP)) )
+COLS <- c("tomato2","turquoise2","purple2","olivedrab1")
+png( paste(PathToPlot,"1-Vectra_Pairs.png",sep=""), height=1200,width=1200,pointsize=32 )
+pairs( data.frame(VEC.4$Score,VEC.4$DAS,log10(VEC.4$CRP)), labels=c("Vectra","DAS","lCRP"),cex=1.2,col=COLS[factor(VEC.4$WKS.x)],pch="+" )
+dev.off()
 
-## Compare to FT
-length(unique(VEC$SubjectID))
-length(unique(VEC$Custom_ID))
-length(unique(VEC$Sample_Collection_Number))
-length(which( as.character(VEC$Sample_Collection_Number) %in% as.character(FT$ID) ))
+# ## Compare to FT
+# length(unique(VEC$SubjectID))
+# length(unique(VEC$Custom_ID))
+# length(unique(VEC$Sample_Collection_Number))
+# length(which( as.character(VEC$Sample_Collection_Number) %in% as.character(FT$ID) ))
 
 #############################################################
 ## CHECK OUT VECTRA RESULTS #################################
 #############################################################
+THE_REST <- function() {
+	polygon( c(0,0,30,30),c(0,100,100,0), density=20,col="springgreen2" )
+	polygon( c(30,30,45,45),c(0,100,100,0), density=20,col="gold1" )
+	polygon( c(45,45,100,100),c(0,100,100,0), density=20,col="firebrick2" )
+}
 
-## Distribution of Score
-hist(SCOR, main=names(VEC)[SCOR_COL],breaks=seq(0,100,5) )
-polygon( c(0,0,30,30),c(0,100,100,0), density=20,col="springgreen2" )
-polygon( c(30,30,45,45),c(0,100,100,0), density=20,col="gold1" )
-polygon( c(45,45,100,100),c(0,100,100,0), density=20,col="firebrick2" )
-hist(SCOR, main=names(VEC)[SCOR_COL],breaks=seq(0,100,5),add=T,col="white" )
+## Distribution of Score (wk0)
+png( paste(PathToPlot,"2-Vectra_Distrib.png",sep=""), height=800,width=1600,pointsize=30 )
+par(mfrow=c(1,2))
+ # Wk 0
+hist(VEC.4$Score[which(VEC.4$WKS.x==0)], main="Vectra Score - Wk0",xlab="Score",breaks=seq(0,100,5) )
+THE_REST()
+hist(VEC.4$Score[which(VEC.4$WKS.x==0)], breaks=seq(0,100,5),add=T,col="white" )
 abline( v=c(30,45),col=c("gold1","red"),lty=2,lwd=2)
+ # Wk 14
+hist(VEC.4$Score[which(VEC.4$WKS.x==14)], main="Vectra Score - Wk14",xlab="Score",breaks=seq(0,100,5) )
+THE_REST()
+hist(VEC.4$Score[which(VEC.4$WKS.x==14)], breaks=seq(0,100,5),add=T,col="white" )
+abline( v=c(30,45),col=c("gold1","red"),lty=2,lwd=2)
+dev.off()
 
 ## Check out Distributions of Molecular Markers
 par(mfrow=c(3,4))
